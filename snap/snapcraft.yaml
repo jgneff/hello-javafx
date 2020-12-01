@@ -1,0 +1,96 @@
+# snapcraft.yaml - builds a Snap package of the JavaFX application
+# Copyright (C) 2020 John Neffenger
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+name: hello-javafx
+title: Hello JavaFX!
+summary: Sample JavaFX application
+description: |
+  This project is my template for building and packaging JavaFX
+  applications. It follows the conventions of Apache Maven for its
+  directory structure and includes a sample application that prints
+  "Hello World!" to standard output when its button is pressed.
+
+  For more information, including the source code and build files,
+  see the README file for this project on GitHub:
+
+  https://github.com/jgneff/hello-javafx
+
+  Java and JavaFX are registered trademarks of Oracle.
+version: '1.0.0'
+license: GPL-3.0+
+
+base: core20
+grade: devel
+confinement: strict
+
+architectures:
+- build-on: amd64
+
+apps:
+  hello-javafx:
+    command: bin/HelloJavaFX
+    plugs:
+    - desktop
+    - desktop-legacy
+    - unity7
+    - opengl
+    environment:
+      JDK_JAVA_OPTIONS: -Duser.home=$SNAP_USER_COMMON
+      LC_ALL: C.UTF-8
+  java:
+    command: bin/java
+    environment:
+      JDK_JAVA_OPTIONS: -Duser.home=$SNAP_USER_COMMON
+      LC_ALL: C.UTF-8
+
+parts:
+  jni:
+    plugin: nil
+    # Package list from 'apt-cache depends libopenjfx-jni', minus libc6,
+    # plus libgif7, libcanberra-gtk-module, and libcanberra-gtk3-module.
+    stage-packages:
+    - libasound2
+    - libavcodec58
+    - libavformat58
+    - libcairo2
+    - libfreetype6
+    - libgdk-pixbuf2.0-0
+    - libgl1
+    - libglib2.0-0
+    - libgtk-3-0
+    - libgtk2.0-0
+    - libjpeg8
+    - libpango-1.0-0
+    - libpangoft2-1.0-0
+    - libx11-6
+    - libxtst6
+    - libgif7
+    - libcanberra-gtk-module
+    - libcanberra-gtk3-module
+  app:
+    after: [jni]
+    plugin: make
+    source: .
+    build-packages: [openjdk-11-jdk-headless]
+    build-snaps: [openjfx/latest/beta]
+
+layout:
+  /usr/lib/x86_64-linux-gnu/dri:
+    bind: $SNAP/usr/lib/x86_64-linux-gnu/dri
+  /usr/lib/x86_64-linux-gnu/gtk-2.0/modules:
+    bind: $SNAP/usr/lib/x86_64-linux-gnu/gtk-2.0/modules
+  /usr/lib/x86_64-linux-gnu/gtk-3.0/modules:
+    bind: $SNAP/usr/lib/x86_64-linux-gnu/gtk-3.0/modules

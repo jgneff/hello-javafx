@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=HelloJavaFX
+Comment=Sample JavaFX application
+Exec=hello-javafx
+Icon=${SNAP}/meta/gui/hello-javafx.png
+Terminal=false
+Type=Application
+Categories=Development;Building;

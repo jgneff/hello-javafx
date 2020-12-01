@@ -1,0 +1,11 @@
+# Apache Maven
+/target/
+
+# GNU Make
+/build/
+/dist/
+
+# Snapcraft
+/prime/
+/*.snap
+/*.txt
