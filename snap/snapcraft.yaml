@@ -28,12 +28,13 @@ description: |
 
   https://github.com/jgneff/hello-javafx
 
-  Java and JavaFX are registered trademarks of Oracle.
+  Java and OpenJDK are trademarks or registered trademarks of Oracle
+  and/or its affiliates.
 version: '1.0.0'
 license: GPL-3.0+
 
 base: core20
-grade: devel
+grade: stable
 confinement: strict
 
 architectures:
@@ -42,55 +43,100 @@ architectures:
 apps:
   hello-javafx:
     command: bin/HelloJavaFX
+    environment:
+      LC_ALL: C.UTF-8
     plugs:
     - desktop
     - desktop-legacy
+    - wayland
     - unity7
     - opengl
-    environment:
-      JDK_JAVA_OPTIONS: -Duser.home=$SNAP_USER_COMMON
-      LC_ALL: C.UTF-8
   java:
     command: bin/java
     environment:
-      JDK_JAVA_OPTIONS: -Duser.home=$SNAP_USER_COMMON
       LC_ALL: C.UTF-8
 
 parts:
-  jni:
+  lib:
     plugin: nil
-    # Package list from 'apt-cache depends libopenjfx-jni', minus libc6,
-    # plus libgif7, libcanberra-gtk-module, and libcanberra-gtk3-module.
+    # Adds Snapcraft list of missing libraries plus
+    # libcanberra-gtk-module and libcanberra-gtk3-module
     stage-packages:
     - libasound2
-    - libavcodec58
-    - libavformat58
+    - libatk-bridge2.0-0
+    - libatk1.0-0
+    - libatspi2.0-0
+    - libcairo-gobject2
     - libcairo2
+    - libdatrie1
+    - libepoxy0
+    - libfontconfig1
     - libfreetype6
+    - libfribidi0
     - libgdk-pixbuf2.0-0
     - libgl1
-    - libglib2.0-0
+    - libglvnd0
+    - libglx0
+    - libgraphite2-3
     - libgtk-3-0
     - libgtk2.0-0
-    - libjpeg8
+    - libharfbuzz0b
     - libpango-1.0-0
+    - libpangocairo-1.0-0
     - libpangoft2-1.0-0
+    - libpixman-1-0
+    - libpng16-16
+    - libthai0
+    - libwayland-client0
+    - libwayland-cursor0
+    - libwayland-egl1
     - libx11-6
+    - libxau6
+    - libxcb-render0
+    - libxcb-shm0
+    - libxcb1
+    - libxcomposite1
+    - libxcursor1
+    - libxdamage1
+    - libxdmcp6
+    - libxext6
+    - libxfixes3
+    - libxi6
+    - libxinerama1
+    - libxkbcommon0
+    - libxrandr2
+    - libxrender1
     - libxtst6
-    - libgif7
     - libcanberra-gtk-module
     - libcanberra-gtk3-module
+
   app:
-    after: [jni]
+    after: [lib]
     plugin: make
-    source: .
-    build-packages: [openjdk-11-jdk-headless]
-    build-snaps: [openjfx/latest/beta]
+    source: https://github.com/jgneff/hello-javafx.git
+    source-depth: 1
+    build-environment:
+    - JAVA_HOME: /snap/openjdk/current/jvm
+    build-snaps: [openjdk/latest/candidate, openjfx/latest/candidate]
+
+  del:
+    after: [app]
+    plugin: nil
+    # Deletes files and links already available in the base core20 snap
+    override-prime: |
+      set -o xtrace
+      cd $SNAPCRAFT_PRIME
+      base=/snap/core20/current
+      find * -type f -exec test -f "$base/{}" \; -delete
+      find * -type l -exec test -L "$base/{}" \; -delete
+      find * -type d -empty -delete
 
 layout:
+  # libGL error: MESA-LOADER: failed to open iris, swrast
   /usr/lib/x86_64-linux-gnu/dri:
-    bind: $SNAP/usr/lib/x86_64-linux-gnu/dri
+    symlink: $SNAP/usr/lib/x86_64-linux-gnu/dri
+  # Gtk-Message: Failed to load module "canberra-gtk-module"
   /usr/lib/x86_64-linux-gnu/gtk-2.0/modules:
-    bind: $SNAP/usr/lib/x86_64-linux-gnu/gtk-2.0/modules
+    symlink: $SNAP/usr/lib/x86_64-linux-gnu/gtk-2.0/modules
   /usr/lib/x86_64-linux-gnu/gtk-3.0/modules:
-    bind: $SNAP/usr/lib/x86_64-linux-gnu/gtk-3.0/modules
+    symlink: $SNAP/usr/lib/x86_64-linux-gnu/gtk-3.0/modules

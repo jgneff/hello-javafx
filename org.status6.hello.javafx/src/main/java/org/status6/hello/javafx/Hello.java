@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package org.status6.hello;
+package org.status6.hello.javafx;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -26,7 +26,7 @@ import javafx.stage.Stage;
  * A JavaFX application that prints "Hello World!" to standard output when its
  * button is pressed.
  */
-public class HelloJavaFX extends Application {
+public class Hello extends Application {
 
     /**
      * A method for unit testing.

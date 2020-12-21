@@ -1,11 +1,11 @@
 # Apache Maven
-/target/
+/org.status6.hello.javafx/target/
 
 # GNU Make
 /build/
 /dist/
 
 # Snapcraft
-/prime/
 /*.snap
 /*.txt
+/prime/

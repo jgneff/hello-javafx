@@ -7,12 +7,10 @@
         </packagings>
         <goals>
             <goal>process-classes</goal>
-            <goal>org.codehaus.mojo:exec-maven-plugin:1.6.0:exec</goal>
+            <goal>org.codehaus.mojo:exec-maven-plugin:3.0.0:exec</goal>
         </goals>
         <properties>
-            <modjar>target/${artifactId}-${project.version}.jar</modjar>
-            <sdklib>/snap/openjfx/current/sdk/lib</sdklib>
-            <exec.args>-p ${modjar}:${sdklib} -m ${groupId}</exec.args>
+            <exec.args>--module-path /snap/openjfx/current/sdk/lib  --add-modules javafx.controls -classpath %classpath ${packageClassName}</exec.args>
             <exec.executable>java</exec.executable>
         </properties>
     </action>
@@ -23,12 +21,10 @@
         </packagings>
         <goals>
             <goal>process-classes</goal>
-            <goal>org.codehaus.mojo:exec-maven-plugin:1.6.0:exec</goal>
+            <goal>org.codehaus.mojo:exec-maven-plugin:3.0.0:exec</goal>
         </goals>
         <properties>
-            <modjar>target/${artifactId}-${project.version}.jar</modjar>
-            <sdklib>/snap/openjfx/current/sdk/lib</sdklib>
-            <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -p ${modjar}:${sdklib} -m ${groupId}</exec.args>
+            <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} --module-path /snap/openjfx/current/sdk/lib  --add-modules javafx.controls -classpath %classpath ${packageClassName}</exec.args>
             <exec.executable>java</exec.executable>
             <jpda.listen>true</jpda.listen>
         </properties>
@@ -40,12 +36,10 @@
         </packagings>
         <goals>
             <goal>process-classes</goal>
-            <goal>org.codehaus.mojo:exec-maven-plugin:1.6.0:exec</goal>
+            <goal>org.codehaus.mojo:exec-maven-plugin:3.0.0:exec</goal>
         </goals>
         <properties>
-            <modjar>target/${artifactId}-${project.version}.jar</modjar>
-            <sdklib>/snap/openjfx/current/sdk/lib</sdklib>
-            <exec.args>-p ${modjar}:${sdklib} -m ${groupId}</exec.args>
+            <exec.args>--module-path /snap/openjfx/current/sdk/lib  --add-modules javafx.controls -classpath %classpath ${packageClassName}</exec.args>
             <exec.executable>java</exec.executable>
         </properties>
     </action>

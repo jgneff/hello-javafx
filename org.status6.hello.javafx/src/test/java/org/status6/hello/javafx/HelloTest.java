@@ -14,12 +14,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+package org.status6.hello.javafx;
+
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
- * Module information for the Hello JavaFX application.
+ * Unit tests for {@link Hello}.
  */
-@SuppressWarnings("module")
-module org.status6.hello {
-    requires javafx.controls;
-    exports org.status6.hello to javafx.graphics;
+public class HelloTest {
+
+    /**
+     * Tests a method that should return <code>true</code>.
+     */
+    @Test
+    public void testTrue() {
+        Assert.assertTrue(Hello.isTrue());
+    }
 }

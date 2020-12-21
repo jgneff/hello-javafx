@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Maven Project Object Model for the sample JavaFX application
+    Maven Project Object Model for the Hello JavaFX project
     Copyright (C) 2020 John Neffenger
 
     This program is free software: you can redistribute it and/or modify
@@ -20,12 +20,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.status6.hello</groupId>
+    <groupId>org.status6</groupId>
     <artifactId>hello-javafx</artifactId>
     <version>1.0.0</version>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
-    <name>hello-javafx</name>
+    <name>Hello JavaFX Project</name>
     <description>Sample JavaFX application</description>
     <url>https://github.com/jgneff/hello-javafx</url>
     <inceptionYear>2020</inceptionYear>
@@ -36,11 +36,14 @@
         </license>
     </licenses>
 
+    <modules>
+        <module>org.status6.hello.javafx</module>
+    </modules>
+
     <properties>
         <maven.compiler.release>11</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <netbeans.hint.license>gpl30</netbeans.hint.license>
-        <exec.mainClass>org.status6.hello.HelloJavaFX</exec.mainClass>
 
         <!-- Javadoc Plugin user properties
             MJAVADOC-595 javadoc not found using java.home
@@ -51,11 +54,6 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-controls</artifactId>
-            <version>11</version>
-        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

@@ -3,6 +3,6 @@ Name=HelloJavaFX
 Comment=Sample JavaFX application
 Exec=hello-javafx
 Icon=${SNAP}/meta/gui/hello-javafx.png
-Terminal=false
+Terminal=true
 Type=Application
 Categories=Development;Building;
