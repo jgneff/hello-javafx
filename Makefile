@@ -1,6 +1,6 @@
 # ======================================================================
 # Makefile - builds the sample JavaFX application
-# Copyright (C) 2020 John Neffenger
+# Copyright (C) 2020-2021 John Neffenger
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 # This Makefile requires the following packages:
-#   $ sudo apt install make openjdk-14-jdk-headless
+#   $ sudo apt install make openjdk-11-jdk-headless
 #   $ sudo apt install junit4 binutils fakeroot
 #   $ sudo snap install openjfx
 #
@@ -27,7 +27,7 @@
 # ======================================================================
 
 # OpenJDK version
-jdk = 14
+jdk = 11
 
 # Java release for source code and target platform
 rel = 11
@@ -38,7 +38,7 @@ app = hello-javafx
 ver = 1.0.0
 
 # Package metadata
-copyright   = "Copyright (C) 2020 John Neffenger"
+copyright   = "Copyright (C) 2020-2021 John Neffenger"
 description = "Sample JavaFX application"
 vendor      = "John Neffenger"
 icon        = snap/gui/$(app).png

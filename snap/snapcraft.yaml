@@ -1,5 +1,5 @@
 # snapcraft.yaml - builds a Snap package of the JavaFX application
-# Copyright (C) 2020 John Neffenger
+# Copyright (C) 2020-2021 John Neffenger
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ apps:
     - desktop
     - desktop-legacy
     - wayland
-    - unity7
+    - x11
     - opengl
   java:
     command: bin/java
@@ -113,30 +113,30 @@ parts:
   app:
     after: [lib]
     plugin: make
-    source: https://github.com/jgneff/hello-javafx.git
-    source-depth: 1
+    source: .
+    source-type: local
     build-environment:
-    - JAVA_HOME: /snap/openjdk/current/jvm
+    - JAVA_HOME: /snap/openjdk/current/jdk
     build-snaps: [openjdk/latest/candidate, openjfx/latest/candidate]
 
   del:
     after: [app]
     plugin: nil
-    # Deletes files and links already available in the base core20 snap
+    # Deletes files and links already available in the base snap
     override-prime: |
       set -o xtrace
       cd $SNAPCRAFT_PRIME
       base=/snap/core20/current
       find * -type f -exec test -f "$base/{}" \; -delete
       find * -type l -exec test -L "$base/{}" \; -delete
-      find * -type d -empty -delete
+      find * -type d -empty -exec test -d "$base/{}" \; -delete
 
 layout:
   # libGL error: MESA-LOADER: failed to open iris, swrast
-  /usr/lib/x86_64-linux-gnu/dri:
-    symlink: $SNAP/usr/lib/x86_64-linux-gnu/dri
+  /usr/lib/$SNAPCRAFT_ARCH_TRIPLET/dri:
+    symlink: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/dri
   # Gtk-Message: Failed to load module "canberra-gtk-module"
-  /usr/lib/x86_64-linux-gnu/gtk-2.0/modules:
-    symlink: $SNAP/usr/lib/x86_64-linux-gnu/gtk-2.0/modules
-  /usr/lib/x86_64-linux-gnu/gtk-3.0/modules:
-    symlink: $SNAP/usr/lib/x86_64-linux-gnu/gtk-3.0/modules
+  /usr/lib/$SNAPCRAFT_ARCH_TRIPLET/gtk-2.0/modules:
+    symlink: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/gtk-2.0/modules
+  /usr/lib/$SNAPCRAFT_ARCH_TRIPLET/gtk-3.0/modules:
+    symlink: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/gtk-3.0/modules
