@@ -14,20 +14,37 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+# ======================================================================
+# Build Requirements
 #
-# This Makefile requires the following packages:
-#   $ sudo apt install make openjdk-11-jdk-headless
+# On Debian-based systems:
+#   $ sudo apt install make default-jdk-headless
 #   $ sudo apt install junit4 binutils fakeroot
+#   $ sudo apt install openjfx
+#
+# On Fedora-based systems:
+#   $ sudo dnf install make
+#   $ sudo dnf install java-latest-openjdk-devel
+#   $ sudo dnf install java-latest-openjdk-jmods
+#   $ sudo dnf install junit binutils dpkg fakeroot
+#   $ sudo dnf install openjfx
+#
+# Source the environment variables (modify as necessary):
+#   bin/debian.env - for Debian-based systems (Makefile defaults)
+#   bin/fedora.env - for Fedora-based systems
+#
+# Note: The Debian and Fedora 'openjfx' packages do not include the
+# JMOD files for linking, so the resulting runtime image is missing the
+# JavaFX native libraries (lib*.so) and the files 'javafx.properties'
+# and 'javafx-swt.jar'. To build a complete runtime image, use the
+# OpenJFX Snap package instead of the distribution packages:
 #   $ sudo snap install openjfx
 #
 # The Snapcraft Make plugin runs this Makefile with:
 #   $ make; make install DESTDIR=$SNAPCRAFT_PART_INSTALL
 #
-# Note: The jpackage tool is available in JDK 14 or later.
+# Note: The 'jpackage' tool is available in JDK 14 or later.
 # ======================================================================
-
-# OpenJDK version
-jdk = 11
 
 # Java release for source code and target platform
 rel = 11
@@ -60,21 +77,23 @@ jar_testfx = hello-testfx-$(ver).jar
 src_javafx = hello-javafx-$(ver)-sources.jar
 doc_javafx = hello-javafx-$(ver)-javadoc.jar
 
-# Debian architecture of build machine
+# Machine hardware name and Debian architecture
+mach := $(shell uname --machine)
 arch := $(shell dpkg --print-architecture)
 
 # Package file names
-package_tar = $(app)-$(ver)-linux-$(arch).tar.gz
+package_tar = $(app)-$(ver)-linux-$(mach).tar.gz
 package_deb = $(app)_$(ver)-$(revision)_$(arch).deb
 
 # Overridden by variables from the environment
-JAVA_HOME  ?= /usr/lib/jvm/java-$(jdk)-openjdk-$(arch)
-JAVAFX_LIB ?= /snap/openjfx/current/sdk/lib
-JAVAFX_MOD ?= /snap/openjfx/current/jmods
+JAVA_HOME  ?= /usr/lib/jvm/default-java
+JUNIT4     ?= /usr/share/java/junit4.jar
+HAMCREST   ?= /usr/share/java/hamcrest-core.jar
+JAVAFX_LIB ?= /usr/share/openjfx/lib
+JAVAFX_MOD ?= /usr/share/openjfx/lib
 
 # Overridden by variables on the Make command line
-JUNIT_JAR = /usr/share/java/junit4.jar
-DESTDIR   = dist/$(app)
+DESTDIR = dist/$(app)
 
 # Commands
 JAVA     = $(JAVA_HOME)/bin/java
@@ -117,7 +136,7 @@ runpath = --module-path $(JAVAFX_LIB) --add-modules javafx.controls
 modpath = --module-path $(subst $(sp),:,$^ $(JAVAFX_MOD))
 
 # Classpath additions for compiling and running tests
-clspath = $(JUNIT_JAR):$(JAVAFX_LIB)/*
+clspath = $(JUNIT4):$(HAMCREST):$(JAVAFX_LIB)/*
 
 # Lists all non-module Java source files for testing
 srctest = $(shell find $(pkg).*/src -name "*.java" \

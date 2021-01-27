@@ -117,6 +117,8 @@ parts:
     source-type: local
     build-environment:
     - JAVA_HOME: /snap/openjdk/current/jdk
+    - JAVAFX_LIB: /snap/openjfx/current/sdk/lib
+    - JAVAFX_MOD: /snap/openjfx/current/jmods
     build-snaps: [openjdk/latest/candidate, openjfx/latest/candidate]
 
   del:
