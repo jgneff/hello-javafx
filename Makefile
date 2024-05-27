@@ -47,7 +47,7 @@
 # ======================================================================
 
 # Java release for source code and target platform
-rel = 11
+rel = 21
 
 # Project information
 pkg = org.status6.hello
@@ -86,14 +86,20 @@ package_tar = $(app)-$(ver)-linux-$(mach).tar.gz
 package_deb = $(app)_$(ver)-$(revision)_$(arch).deb
 
 # Overridden by variables from the environment
-JAVA_HOME  ?= /usr/lib/jvm/default-java
+JAVA_HOME  ?= /usr/lib/jvm/java-21-openjdk-amd64
 JUNIT4     ?= /usr/share/java/junit4.jar
 HAMCREST   ?= /usr/share/java/hamcrest-core.jar
-JAVAFX_LIB ?= /usr/share/openjfx/lib
-JAVAFX_MOD ?= /usr/share/openjfx/lib
+JAVAFX_LIB ?= /snap/openjfx/current/sdk/lib
+JAVAFX_MOD ?= /snap/openjfx/current/sdk/jmods
 
 # Overridden by variables on the Make command line
 DESTDIR = dist/$(app)
+
+# Environment variable for reproducible builds
+SOURCE_DATE_EPOCH := $(shell git log -1 main --pretty=%ct)
+export SOURCE_DATE_EPOCH
+
+iso_date := $(shell date -d @$(SOURCE_DATE_EPOCH) --iso-8601=seconds)
 
 # Commands
 JAVA     = $(JAVA_HOME)/bin/java
@@ -156,14 +162,14 @@ execjar = --main-class $(pkg).$*.Hello --module-version $(ver)
 
 dist/hello-%-$(ver).jar: $(srcmain) | dist
 	$(JAVAC) --release $(rel) -d $(out) $(srcpath) --module $(pkg).$*
-	$(JAR) --create --file $@ $(execjar) -C $(out)/$(pkg).$* .
+	$(JAR) --create --file $@ --date $(iso_date) $(execjar) -C $(out)/$(pkg).$* .
 
 dist/hello-%-$(ver)-javadoc.jar: $(srcmain) | dist
-	$(JAVADOC) -quiet -d $(doc)/$(pkg).$* $(srcpath) --module $(pkg).$*
-	$(JAR) --create --file $@ -C $(doc)/$(pkg).$* .
+	$(JAVADOC) -quiet -notimestamp -d $(doc)/$(pkg).$* $(srcpath) --module $(pkg).$*
+	$(JAR) --create --file $@ --date $(iso_date) -C $(doc)/$(pkg).$* .
 
 dist/hello-%-$(ver)-sources.jar: $(srcmain) | dist
-	$(JAR) --create --file $@ -C $(pkg).$*/src/main/java .
+	$(JAR) --create --file $@ --date $(iso_date) -C $(pkg).$*/src/main/java .
 
 dist/%.sha256: dist/%
 	cd $(@D); sha256sum $(<F) > $(@F)
@@ -194,13 +200,9 @@ run: run-javafx
 dist:
 	mkdir -p $@
 
-# The strip command works around the following issue, fixed in JDK 13:
-# Create a jlink plugin for stripping debug info symbols from native libraries
-# https://bugs.openjdk.java.net/browse/JDK-8214796
 $(DESTDIR): dist/$(jar_javafx)
 	rm -rf $(DESTDIR)
 	$(JLINK) $(JLINK_OPT) $(modpath) --output $@
-	strip --strip-debug $(DESTDIR)/lib/server/libjvm.so
 
 dist/$(package_tar): $(DESTDIR)
 	tar --create --file $@ --gzip -C $(<D) $(<F)
@@ -210,7 +212,7 @@ dist/$(package_deb): dist/$(jar_javafx)
 
 dist/$(jar_testfx): $(srctest) | dist
 	$(JAVAC) --release $(rel) -d $(tst) --class-path $(clspath) $^
-	$(JAR) --create --file $@ -C $(tst) .
+	$(JAR) --create --file $@ --date $(iso_date) -C $(tst) .
 
 test: dist/$(jar_testfx)
 	$(JAVA) --class-path $<:$(clspath) $(junit) $(tests)
